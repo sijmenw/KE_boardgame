@@ -99,6 +99,11 @@ def getMultipleAttributeValues(cur, query):
 
 	return valueList
 
+def build_profile(dict):
+	profile = GameProfile(dict["min_players"], dict["max_players"], dict["player_age"], )
+
+	return profile
+
 def main():
 	gp = GameProfile(2, 6, 10, ["Economic"], ["Area Control / Area Influence", "Tile Placement", "Dice Rolling"], 5, 240)
 

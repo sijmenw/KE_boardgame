@@ -5,10 +5,9 @@ displayView = function(viewToDisplay){
 };
 
 processQuery = function() {
-    var min_players = document.getElementById('queryForm').min_players.value;
-    var max_players = document.getElementById('queryForm').max_players.value;
-    min_players == "" ? min_players = 0 : min_players = min_players;
-    max_players == "" ? max_players = 0 : max_players = max_players;
+    var queryForm = document.getElementById('queryForm');
+    var parsedForm = parseFormObject(queryForm);
+    var JSONForm = objectToJSON(parsedForm);
 
     // send to server
     var xhttp = new XMLHttpRequest();
@@ -19,19 +18,43 @@ processQuery = function() {
                 var resultString = JSONResultObject['data'];
                 console.log(resultString);
                 displayView('resultView');
-                document.getElementById('queryResults').innerHTML = resultString;
+                document.getElementById('results').innerHTML = resultString;
             } else {
                 // give feedback
-                document.getElementById('feedbackBox').innerHTML = 'ERROR: Fucked shit up';
+                console.log('ERROR: Fucked shit up');
             }
         }
     };
-    xhttp.open("GET", "query_games/"+min_players+"/"+max_players, true);
-    xhttp.send();
+
+    xhttp.open("POST", "query_games/", true);
+    xhttp.send(JSONForm);
 };
 
 window.onload = function(){
     var viewToDisplay = 'welcomeView';
 
     displayView(viewToDisplay);
+};
+
+objectToJSON = function(inputObject) {
+    jsonString = "{";
+    for (var key in inputObject) {
+        // keys without a name will be skipped
+        if (inputObject.hasOwnProperty(key) && key != "") {
+            jsonString += "\"" + key + "\":\"" + inputObject[key] + "\", ";
+        }
+    }
+    jsonString = jsonString.slice(0,-2);
+    jsonString += "}";
+    return(jsonString);
+};
+
+parseFormObject = function(inputObject) {
+    var resultObject = new Object();
+    for (var key in inputObject) {
+        if (inputObject.hasOwnProperty(key)) {
+            resultObject[inputObject[key].name] = inputObject[key].value;
+        }
+    }
+    return resultObject;
 };
