@@ -2,6 +2,50 @@ displayView = function(viewToDisplay){
     var newView = document.getElementById(viewToDisplay).innerHTML;
     var viewContainer = document.getElementById('viewContainer');
     viewContainer.innerHTML = newView;
+
+    // if the view to display is the welcome screen, populate the form
+    if (viewToDisplay == 'welcomeView') {
+        // send to server
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange=function() {
+            if (xhttp.readyState == 4) {
+                JSONResultObject = JSON.parse(xhttp.responseText);
+                if (JSONResultObject['success'] == 'true') {
+                    // populate the form
+                    console.log("options received:", JSONResultObject.data);
+                    populateForm(JSONResultObject.data)
+                } else {
+                    // give feedback
+                    console.log('ERROR: Fucked shit up');
+                }
+            }
+        };
+
+        xhttp.open("POST", "get_form_options/", true);
+        xhttp.send();
+    }
+
+};
+
+populateForm = function(data) {
+
+    var checkboxKeys = Object.keys(data);
+
+    for (var keyCount = 0; keyCount < checkboxKeys.length; keyCount++) {
+        var innerHtml = "";
+        var keyName = checkboxKeys[keyCount];
+
+        var checkboxList = data[keyName];
+        var title = keyName;
+
+        for (var i = 0; i < checkboxList.length; i++) {
+            innerHtml += "<div class='row'><div class='col-md-6'>" + title + "</div> <div class='col-md-6'> <input type='checkbox' name='" + keyName + checkboxList[i] + "' value='" + checkboxList[i] + "'class='rightFloat'>" + checkboxList[i] + "</div></div>"
+            title = "";
+        }
+
+        document.getElementById(keyName).innerHTML = innerHtml;
+    }
+
 };
 
 processQuery = function() {
