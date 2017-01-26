@@ -20,9 +20,7 @@ def query_games():
     # get data
     dict_input = request.get_json(force=True)
 
-    print dict_input
-
-    boardgamerecommender.main(dict_input)
+    # boardgamerecommender.main(dict_input)
 
     result = {'success': 'true', 'message': 'Heuy fissa', 'data': 'dummy dummy'}
     return json.dumps(result)

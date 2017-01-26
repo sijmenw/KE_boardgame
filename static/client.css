@@ -11,3 +11,9 @@ body {
     left: calc(50% - 250px);
     top: calc(50% - 250px);
 }
+
+#returnButton {
+    position: absolute;
+    left: 25px;
+    bottom: 40px;
+}
