@@ -4,12 +4,12 @@ from boardgamegeek import BoardGameGeekError
 import MySQLdb
 import unicodedata
 
-db = MySQLdb.connect("localhost", "root", "mouse", "boardgamegeek")
+db = MySQLdb.connect("bggeekdb.cy2mn0eirox3.eu-west-1.rds.amazonaws.com", "geek", "GeekPass123", "bggeek")
 cur = db.cursor()
 
 bgg = BoardGameGeek()
 
-for i in range(3227, 3500):
+for i in range(1000, 3000):
   try:
 	  g = bgg.game(game_id = i)
 
