@@ -58,6 +58,7 @@ def getDistinctOptions(query):
             result_list.append(res[0])
     except:
         print "Error: unable to fetch data"
+        db.close()
 
     db.close()
     return result_list
@@ -163,11 +164,6 @@ def getMultipleAttributeValues(cur, query):
         valueList.append(value[0])
 
     return valueList
-
-def build_profile(dict):
-    profile = GameProfile(dict["min_players"], dict["max_players"], dict["player_age"], )
-
-    return profile
 
 def recommend(profparams):
     #print profparams['min_players']
