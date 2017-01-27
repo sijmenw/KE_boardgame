@@ -32,13 +32,35 @@ def query_games():
 
 @app.route('/get_form_options/', methods=['POST'])
 def get_form_options():
-    # dummy queries
-    categories_list = ['one', 'two', 'three']
-    mechanics_list = ['four', 'five', 'six']
+
+    categoriesQuery = "select distinct category from boardgame_category;"
+    mechanicsQuery = "select distinct mechanics from boardgame_mechanics;"
+
+    categories_list = getDistinctOptions(categoriesQuery)
+    mechanics_list = getDistinctOptions(mechanicsQuery)
+
     checkboxes = {'categories': categories_list, 'mechanics': mechanics_list}
 
     result = {'success': 'true', 'message': 'Here are the dropdowns', 'data': checkboxes}
     return json.dumps(result)
+
+def getDistinctOptions(query):
+    db = MySQLdb.connect("localhost", "root", "mouse", "boardgamegeek")
+    cur = db.cursor()
+
+    result_list = []
+
+    try:
+        cur.execute(query)
+        results = cur.fetchall()
+
+        for res in results:
+            result_list.append(res[0])
+    except:
+        print "Error: unable to fetch data"
+
+    db.close()
+    return result_list
 
 #WHILE NEW-SOLUTION generate(object -> class) DO
 # candidate-classes := class ADD candidate-classes;

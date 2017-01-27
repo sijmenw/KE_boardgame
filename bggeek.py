@@ -9,7 +9,7 @@ cur = db.cursor()
 
 bgg = BoardGameGeek()
 
-for i in range(1000, 3000):
+for i in range(3000, 6000):
   try:
 	  g = bgg.game(game_id = i)
 
