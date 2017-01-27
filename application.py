@@ -26,7 +26,9 @@ def query_games():
 
     recommendations = recommend(dict_input)
 
-    result = {'success': 'true', 'message': 'Heuy fissa', 'data': recommendations}
+    print recommendations
+
+    result = {'success': 'true', 'message': 'Heuy fissa', 'data': [ob.__dict__ for ob in recommendations]}
     return json.dumps(result)
 
 
