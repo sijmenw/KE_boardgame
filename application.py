@@ -46,19 +46,18 @@ def get_form_options():
     return json.dumps(result)
 
 def getDistinctOptions(query):
-    db = credentials.connect()
-    cur = db.cursor()
-
     result_list = []
 
     try:
+        db = credentials.connect()
+        cur = db.cursor()
         cur.execute(query)
         results = cur.fetchall()
 
         for res in results:
             result_list.append(res[0])
-    except:
-        print "Error: unable to fetch data"
+    except Exception as e:
+        print "Error: unable to fetch data" + str(e)
         db.close()
 
     db.close()
@@ -74,39 +73,39 @@ def generateCandidateGames():
     cur = db.cursor()
 
     #get each candidate from the 'boardgame' table
-    canditatesQuery = "select * from boardgame;"
+    canditatesQuery = "select * from boardgame limit 100;"
 
     try:
         cur.execute(canditatesQuery)
         gameResults = cur.fetchall()
 
+        description = ""
         games = []
 
         for game in gameResults:
             boardgame_id = game[0]
             name = game[1]
-            description = game[2]
-            expansion = game[3]
-            min_players = game[4]
-            max_players = game[5]
-            min_age = game[6]
-            playing_time = game[7]
-            rating = game[8]
+            expansion = game[2]
+            min_players = game[3]
+            max_players = game[4]
+            min_age = game[5]
+            playing_time = game[6]
+            rating = game[7]
 
             #get all multiple values for each candidate: categories, mechanics, publishers and designers
             categoriesQuery = "select category from boardgame_category where boardgame_id = " + str(boardgame_id) + ";"
             mechanicsQuery = "select mechanics from boardgame_mechanics where boardgame_id = " + str(boardgame_id) + ";"
-            publishersQuery = "select publisher from boardgame_publisher where boardgame_id = " + str(boardgame_id) + ";"
-            designersQuery = "select designer from boardgame_designer where boardgame_id = " + str(boardgame_id) + ";"
+            #publishersQuery = "select publisher from boardgame_publisher where boardgame_id = " + str(boardgame_id) + ";"
+            #designersQuery = "select designer from boardgame_designer where boardgame_id = " + str(boardgame_id) + ";"
 
             categories = getMultipleAttributeValues(cur, categoriesQuery)
             mechanics = getMultipleAttributeValues(cur, mechanicsQuery)
-            publishers = getMultipleAttributeValues(cur, publishersQuery)
-            designers = getMultipleAttributeValues(cur, designersQuery)
+            #publishers = getMultipleAttributeValues(cur, publishersQuery)
+            #designers = getMultipleAttributeValues(cur, designersQuery)
 
             game = Game(boardgame_id, name, min_players, max_players, min_age, categories, \
-                        mechanics, description, playing_time, False, "test", publishers, \
-                        designers, rating)
+                        mechanics, description, playing_time, False, "test", [], \
+                        [], rating)
 
             games.append(game)
     except:
