@@ -1,6 +1,7 @@
 from gameprofile import GameProfile
 from game import Game
 import MySQLdb
+import credentials
 
 #WHILE NEW-SOLUTION generate(object -> class) DO
 # candidate-classes := class ADD candidate-classes;
@@ -8,7 +9,7 @@ import MySQLdb
 
 def generateCandidateGames():
 
-    db = MySQLdb.connect("localhost", "root", "mouse", "boardgamegeek")
+    db = credentials.connect()
     cur = db.cursor()
 
     #get each candidate from the 'boardgame' table

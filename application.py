@@ -6,6 +6,7 @@ from contextlib import closing
 from gameprofile import GameProfile
 from game import Game
 import MySQLdb
+import credentials
 
 # create our little application :)
 app = Flask(__name__)
@@ -21,8 +22,6 @@ def home():
 def query_games():
     # get data
     dict_input = request.get_json(force=True)
-
-    print dict_input
 
     recommendations = recommend(dict_input)
 
@@ -47,7 +46,7 @@ def get_form_options():
     return json.dumps(result)
 
 def getDistinctOptions(query):
-    db = MySQLdb.connect("localhost", "root", "mouse", "boardgamegeek")
+    db = credentials.connect()
     cur = db.cursor()
 
     result_list = []
@@ -71,7 +70,7 @@ def getDistinctOptions(query):
 
 def generateCandidateGames():
 
-    db = MySQLdb.connect("localhost", "root", "mouse", "boardgamegeek")
+    db = credentials.connect()
     cur = db.cursor()
 
     #get each candidate from the 'boardgame' table
@@ -134,7 +133,7 @@ def obtainRecommendations(gameProfile, games):
     for game in games:
         if matchFeatureSet(gameProfile, game):
             print game.name
-            recommendations.append(game) 
+            recommendations.append(game)
     
     return recommendations
 
