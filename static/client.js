@@ -61,8 +61,9 @@ processQuery = function() {
             if (JSONResultObject['success'] == 'true') {
                 var resultString = JSONResultObject['data'];
                 console.log(resultString);
+                var recommendations = parseRecommendations(resultString);
                 displayView('resultView');
-                document.getElementById('results').innerHTML = resultString;
+                document.getElementById('results').innerHTML = recommendations;
             } else {
                 // give feedback
                 console.log('ERROR: Fucked shit up');
@@ -73,6 +74,16 @@ processQuery = function() {
     xhttp.open("POST", "query_games/", true);
     xhttp.send(JSONForm);
 };
+
+parseRecommendations = function(input_array) {
+    var result = "";
+    for (var i = 0; i < input_array.length; i++) {
+        var link = "<a href='https://boardgamegeek.com/boardgame/" + input_array[i].boardgame_id + "/'> link </a>";
+        result += (i+1) + ". " +  input_array[i].name + ", rating: " + input_array[i].rating + link + "<br>";
+    }
+    return result;
+};
+
 
 window.onload = function(){
     var viewToDisplay = 'welcomeView';
