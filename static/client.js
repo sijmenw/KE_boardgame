@@ -76,14 +76,13 @@ processQuery = function() {
 };
 
 parseRecommendations = function(input_array) {
-    var result = "";
+    var result = "<div class='row'><div class='col-md-1'></div><div class='col-md-7'>Name</div><div class='col-md-3'>User rating</div><div class='col-md-1'>Link</div></div>";
     for (var i = 0; i < input_array.length; i++) {
-        var link = "<a href='https://boardgamegeek.com/boardgame/" + input_array[i].boardgame_id + "/'> link </a>";
-        result += (i+1) + ". " +  input_array[i].name + ", rating: " + input_array[i].rating + link + "<br>";
+        var link = "<a href='https://boardgamegeek.com/boardgame/" + input_array[i].boardgame_id + "/'> BGG </a>";
+        result += "<div class='row'><div class='col-md-1'>" + (i+1) + ".</div><div class='col-md-7'>" +  input_array[i].name + "</div><div class='col-md-3'>" + input_array[i].rating + "</div><div class='col-md-1'>" + link + "</div></div>";
     }
     return result;
 };
-
 
 window.onload = function(){
     var viewToDisplay = 'welcomeView';
