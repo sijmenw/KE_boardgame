@@ -172,7 +172,8 @@ def getMultipleAttributeValues(cur, query):
 
 def recommend(profparams):
     #print profparams['categories'].split(",")
-    gp = GameProfile(int(profparams['min_players']), int(profparams['max_players']), int(profparams['player_age']), ["Economic"], ["Area Control / Area Influence", "Tile Placement", "Dice Rolling"], 5, 240)
+    gp = GameProfile(int(profparams['min_players']), int(profparams['max_players']), int(profparams['player_age']), profparams['categories'].split(","), \
+                    profparams['mechanics'].split(","), int(profparams['min_playing_time']), int(profparams['max_playing_time']))
     
     gp.displayGameProfile()
 
@@ -180,11 +181,14 @@ def recommend(profparams):
 
     recommendations = obtainRecommendations(gp, games)
 
-    sortedRecommendations = sorted(recommendations, key=lambda k: k['rating']) 
+    #sortedRecommendations = sorted(recommendations, key=lambda k: k['rating']) 
 
-    print sortedRecommendations
+    #sort_on = "rating"
+    #decorated = [(dict_[sort_on], dict_) for dict_ in recommendations]
+    #decorated.sort()
+    #result = [dict_ for (key, dict_) in decorated]
 
-    return sortedRecommendations[:10]
+    return recommendations[:10]
 
 if __name__ == '__main__':
     app.run()
