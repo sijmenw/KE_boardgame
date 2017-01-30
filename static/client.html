@@ -3,6 +3,7 @@
     <title>Justyna & Sijmen - game recommender</title>
     <link href="static/bootstrap.css" type="text/css" rel="stylesheet">
     <link href="static/client.css" type="text/css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="static/client.js" type="text/javascript"></script>
     <script type="text/view" id="welcomeView">
         <div id="welcomeScreenContainer" class="screenContainer">
@@ -19,7 +20,7 @@
                     <div id="query">
                         <form onsubmit="processQuery(); return false;" id="queryForm">
 
-                            <div class="row"><div class="col-md-6">Min players</div> <div class="col-md-6">
+                            <div class="row"><div class="col-md-6 formHead">Min players</div> <div class="col-md-6">
                                 <select name="min_players"  id="min_players" class="rightFloat">
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -32,7 +33,7 @@
                                 </select>
                             </div></div>
 
-                            <div class="row"><div class="col-md-6">Max players</div> <div class="col-md-6">
+                            <div class="row"><div class="col-md-6 formHead">Max players</div> <div class="col-md-6">
                                 <select name="max_players"  id="max_players" class="rightFloat">
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -52,7 +53,7 @@
                                 </select>   
 
                             </div></div>
-                            <div class="row"><div class="col-md-6">Player age </div> <div class="col-md-6"> 
+                            <div class="row"><div class="col-md-6 formHead">Player age </div> <div class="col-md-6">
                                 <select name="player_age"  id="player_age" class="rightFloat">
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -77,11 +78,11 @@
                             </div>
                             <div id="mechanics">
                             </div>
-                            <div class="row"><div class="col-md-6">Min playing time [min]</div> <div class="col-md-6"> <input type="text" name="min_playing_time" id="min_playing_time" class="rightFloat"></div></div>
-                            <div class="row"><div class="col-md-6">Max playing time [min]</div> <div class="col-md-6"> <input type="text" name="max_playing_time" id="max_playing_time" class="rightFloat"></div></div>
-                            <div class="row"><div class="col-md-6">Expansion </div> <div class="col-md-6"> <input type="checkbox" name="expansion" id="expansion" class="rightFloat"></div></div>
-                            <div class="row"><div class="col-md-6">Publishers </div> <div class="col-md-6"> <input type="text" name="publishers" id="publishers" class="rightFloat"></div></div>
-                            <div class="row"><div class="col-md-6">Designers </div> <div class="col-md-6"> <input type="text" name="designers" id="designers" class="rightFloat"></div></div>
+                            <div class="row"><div class="col-md-6 formHead">Min playing time [min]</div> <div class="col-md-6"> <input type="text" name="min_playing_time" id="min_playing_time" class="rightFloat"></div></div>
+                            <div class="row"><div class="col-md-6 formHead">Max playing time [min]</div> <div class="col-md-6"> <input type="text" name="max_playing_time" id="max_playing_time" class="rightFloat"></div></div>
+                            <div class="row"><div class="col-md-6 formHead">Expansion </div> <div class="col-md-6"> <input type="checkbox" name="expansion" id="expansion" class="rightFloat"></div></div>
+                            <div class="row"><div class="col-md-6 formHead">Publishers </div> <div class="col-md-6"> <input type="text" name="publishers" id="publishers" class="rightFloat"></div></div>
+                            <div class="row"><div class="col-md-6 formHead">Designers </div> <div class="col-md-6"> <input type="text" name="designers" id="designers" class="rightFloat"></div></div>
                             <input type="submit" value="Recommend" id="queryButton" >
                         </form>
                     </div>

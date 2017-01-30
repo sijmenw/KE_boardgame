@@ -2,14 +2,21 @@ body {
     background: lightcyan;
 }
 
+.formHead {
+    font-weight: bold;
+}
+
+.formHead:first-letter {
+    text-transform: capitalize;
+}
+
 .screenContainer {
     position: absolute;
     border: 1px solid black;
-    width: 500px;
-    height: 500px;
+    width: 700px;
     background: whitesmoke;
-    left: calc(50% - 250px);
-    top: calc(50% - 250px);
+    left: calc(50% - 350px);
+    top: 100px;
 }
 
 #returnButton {

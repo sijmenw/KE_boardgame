@@ -32,16 +32,21 @@ populateForm = function(data) {
     var checkboxKeys = Object.keys(data);
 
     for (var keyCount = 0; keyCount < checkboxKeys.length; keyCount++) {
-        var innerHtml = "";
         var keyName = checkboxKeys[keyCount];
-
         var checkboxList = data[keyName];
+
         var title = keyName;
 
+        var innerHtml = "<div class='row'><div class='col-md-6 formHead'>" + title + "</div><div class='col-md-6'><input type='button' value='show'></div>";
+
         for (var i = 0; i < checkboxList.length; i++) {
-            innerHtml += "<div class='row'><div class='col-md-6'>" + title + "</div> <div class='col-md-6'> <input type='checkbox' name='" + keyName + checkboxList[i] + "' value='" + checkboxList[i] + "'class='rightFloat'>" + checkboxList[i] + "</div></div>"
-            title = "";
+            if (i % 3 == 0) {
+                innerHtml += "</div><div class='row'>";
+            }
+            innerHtml += "<div class='col-md-4'> <input type='checkbox' name='" + keyName + checkboxList[i] + "' value='" + checkboxList[i] + "' class='rightFloat'>" + checkboxList[i] + "</div>";
         }
+
+        innerHtml += "</div>";
 
         document.getElementById(keyName).innerHTML = innerHtml;
     }
@@ -104,7 +109,7 @@ objectToJSON = function(inputObject) {
 };
 
 parseFormObject = function(inputObject) {
-    var resultObject = new Object();
+    var resultObject = {};
     for (var key in inputObject) {
         if (inputObject.hasOwnProperty(key)) {
             resultObject[inputObject[key].name] = inputObject[key].value;
