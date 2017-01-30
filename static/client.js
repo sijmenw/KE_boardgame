@@ -37,11 +37,14 @@ populateForm = function(data) {
 
         var title = keyName;
 
-        var innerHtml = "<div class='row'><div class='col-md-6 formHead'>" + title + "</div><div class='col-md-6'><input type='button' value='show'></div>";
+        var innerHtml = "";
 
         for (var i = 0; i < checkboxList.length; i++) {
             if (i % 3 == 0) {
-                innerHtml += "</div><div class='row'>";
+                if (i > 0) {
+                    innerHtml += "</div>";
+                }
+                innerHtml += "<div class='row'>";
             }
             innerHtml += "<div class='col-md-4'> <input type='checkbox' name='categories' value='" + checkboxList[i] + "' class='rightFloat'>" + checkboxList[i] + "</div>";
         }
@@ -128,4 +131,18 @@ parseFormObject = function(inputObject) {
     resultObject.mechanics = mechanicsArray;
 
     return resultObject;
+};
+
+showOptions = function(id) {
+    var selector = '#' + id;
+    var buttonSelector = selector + 'Button';
+    var current = $(selector).css("display");
+
+    if (current == "none") {
+        $(selector).css("display", "");
+        $(buttonSelector).val("hide");
+    } else {
+        $(selector).css("display", "none");
+        $(buttonSelector).val("show");
+    }
 };

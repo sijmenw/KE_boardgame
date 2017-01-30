@@ -74,9 +74,11 @@
                                 </select> 
 
                             </div></div>
-                            <div id="categories">
+                            <div class="row"><div class="col-md-6 formHead">Categories</div><div class="col-md-6"><input type="button" id="categoriesButton" onClick="showOptions('categories')" value="show"></div></div>
+                            <div id="categories" style="display: none">
                             </div>
-                            <div id="mechanics">
+                            <div class="row"><div class="col-md-6 formHead">Mechanics</div><div class="col-md-6"><input type="button" id="mechanicsButton" onClick="showOptions('mechanics')" value="show"></div></div>
+                            <div id="mechanics" style="display: none">
                             </div>
                             <div class="row"><div class="col-md-6 formHead">Min playing time [min]</div> <div class="col-md-6"> <input type="text" name="min_playing_time" id="min_playing_time" class="rightFloat"></div></div>
                             <div class="row"><div class="col-md-6 formHead">Max playing time [min]</div> <div class="col-md-6"> <input type="text" name="max_playing_time" id="max_playing_time" class="rightFloat"></div></div>
