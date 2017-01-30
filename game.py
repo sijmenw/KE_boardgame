@@ -14,7 +14,7 @@
 # family
 # rating
 
-class Game:
+class Game(object):
 
 	def __init__(self, boardgame_id, name, min_players, max_players, player_age, \
 				categories, mechanics, description, playing_time, expansion, \

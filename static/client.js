@@ -46,7 +46,7 @@ populateForm = function(data) {
                 }
                 innerHtml += "<div class='row'>";
             }
-            innerHtml += "<div class='col-md-4'> <input type='checkbox' name='categories' value='" + checkboxList[i] + "' class='rightFloat'>" + checkboxList[i] + "</div>";
+            innerHtml += "<div class='col-md-4'> <input type='checkbox' name='" + title + "' value='" + checkboxList[i] + "' class='rightFloat'>" + checkboxList[i] + "</div>";
         }
 
         innerHtml += "</div>";
