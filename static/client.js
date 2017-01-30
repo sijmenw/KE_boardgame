@@ -43,7 +43,7 @@ populateForm = function(data) {
             if (i % 3 == 0) {
                 innerHtml += "</div><div class='row'>";
             }
-            innerHtml += "<div class='col-md-4'> <input type='checkbox' name='" + keyName + checkboxList[i] + "' value='" + checkboxList[i] + "' class='rightFloat'>" + checkboxList[i] + "</div>";
+            innerHtml += "<div class='col-md-4'> <input type='checkbox' name='categories' value='" + checkboxList[i] + "' class='rightFloat'>" + checkboxList[i] + "</div>";
         }
 
         innerHtml += "</div>";
@@ -115,5 +115,17 @@ parseFormObject = function(inputObject) {
             resultObject[inputObject[key].name] = inputObject[key].value;
         }
     }
+
+    var categoriesArray =  $("input[name='categories']:checked").map(function(){
+        return this.value;
+    }).get();
+
+    var mechanicsArray =  $("input[name='mechanics']:checked").map(function(){
+        return this.value;
+    }).get();
+
+    resultObject.categories = categoriesArray;
+    resultObject.mechanics = mechanicsArray;
+
     return resultObject;
 };
