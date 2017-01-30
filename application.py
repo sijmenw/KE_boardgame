@@ -23,11 +23,19 @@ def query_games():
     # get data
     dict_input = request.get_json(force=True)
 
-    recommendations = recommend(dict_input)
+    print dict_input
+
+    recommendtions = recommend(dict_input)
 
     print recommendations
+    
+    for r in recommendations:
+        print r
+        print "a"
+        #resultData.append(recommendations[i].__dict__)
 
-    result = {'success': 'true', 'message': 'Heuy fissa', 'data': [ob.__dict__ for ob in recommendations]}
+
+    result = {'success': 'true', 'message': 'Heuy fissa', 'data': resultData}
     return json.dumps(result)
 
 
@@ -73,7 +81,7 @@ def generateCandidateGames():
     cur = db.cursor()
 
     #get each candidate from the 'boardgame' table
-    canditatesQuery = "select * from boardgame limit 100;"
+    canditatesQuery = "select * from boardgame limit 500;"
 
     try:
         cur.execute(canditatesQuery)
@@ -131,7 +139,6 @@ def obtainRecommendations(gameProfile, games):
 
     for game in games:
         if matchFeatureSet(gameProfile, game):
-            print game.name
             recommendations.append(game)
     
     return recommendations
@@ -166,14 +173,18 @@ def getMultipleAttributeValues(cur, query):
     return valueList
 
 def recommend(profparams):
-    #print profparams['min_players']
-    gp = GameProfile(int(profparams['min_players']), int(profparams['max_players']), 10, ["Economic"], ["Area Control / Area Influence", "Tile Placement", "Dice Rolling"], 5, 240)
+    #print profparams['categories'].split(",")
+    gp = GameProfile(int(profparams['min_players']), int(profparams['max_players']), int(profparams['player_age']), ["Economic"], ["Area Control / Area Influence", "Tile Placement", "Dice Rolling"], 5, 240)
     
     gp.displayGameProfile()
 
     games = generateCandidateGames()
 
+    print len(games)
+
     recommendations = obtainRecommendations(gp, games)
+
+    #sortedRecommendations = sorted(recommendations, key=lambda k: k['rating']) 
 
     return recommendations
 
