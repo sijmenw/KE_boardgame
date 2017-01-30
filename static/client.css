@@ -10,6 +10,11 @@ body {
     text-transform: capitalize;
 }
 
+.row {
+    margin-bottom: 4px;
+    margin-top: 4px;
+}
+
 .screenContainer {
     position: absolute;
     border: 1px solid black;
