@@ -25,14 +25,12 @@ def query_games():
 
     print dict_input
 
-    recommendtions = recommend(dict_input)
+    recommendations = recommend(dict_input)
 
-    print recommendations
+    resultData = []
     
     for r in recommendations:
-        print r
-        print "a"
-        #resultData.append(recommendations[i].__dict__)
+        resultData.append(r.__dict__)
 
 
     result = {'success': 'true', 'message': 'Heuy fissa', 'data': resultData}
@@ -180,13 +178,13 @@ def recommend(profparams):
 
     games = generateCandidateGames()
 
-    print len(games)
-
     recommendations = obtainRecommendations(gp, games)
 
-    #sortedRecommendations = sorted(recommendations, key=lambda k: k['rating']) 
+    sortedRecommendations = sorted(recommendations, key=lambda k: k['rating']) 
 
-    return recommendations
+    print sortedRecommendations
+
+    return sortedRecommendations[:10]
 
 if __name__ == '__main__':
     app.run()
