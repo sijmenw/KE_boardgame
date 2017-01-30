@@ -25,7 +25,5 @@ body {
 }
 
 #returnButton {
-    position: absolute;
-    left: 25px;
-    bottom: 40px;
+    margin-left: 20px;
 }
