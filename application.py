@@ -7,6 +7,7 @@ from gameprofile import GameProfile
 from game import Game
 import MySQLdb
 import credentials
+from operator import itemgetter
 
 # create our little application :)
 app = Flask(__name__)
@@ -62,6 +63,7 @@ def getDistinctOptions(query):
 
         for res in results:
             result_list.append(res[0])
+
     except Exception as e:
         print "Error: unable to fetch data" + str(e)
         db.close()
@@ -79,7 +81,12 @@ def generateCandidateGames():
     cur = db.cursor()
 
     #get each candidate from the 'boardgame' table
-    canditatesQuery = "select * from boardgame limit 500;"
+    canditatesQuery = "select * from boardgame;"
+    categoriesQuery = "select * from boardgame_category";
+    mechanicsQuery = "select * from boardgame_mechanics";
+
+    categoriesDict = getMultipleAttributeValues(cur, categoriesQuery)
+    mechanicsDict = getMultipleAttributeValues(cur, mechanicsQuery)
 
     try:
         cur.execute(canditatesQuery)
@@ -87,6 +94,8 @@ def generateCandidateGames():
 
         description = ""
         games = []
+        categories = []
+        mechanics = []
 
         for game in gameResults:
             boardgame_id = game[0]
@@ -98,27 +107,38 @@ def generateCandidateGames():
             playing_time = game[6]
             rating = game[7]
 
-            #get all multiple values for each candidate: categories, mechanics, publishers and designers
-            categoriesQuery = "select category from boardgame_category where boardgame_id = " + str(boardgame_id) + ";"
-            mechanicsQuery = "select mechanics from boardgame_mechanics where boardgame_id = " + str(boardgame_id) + ";"
-            #publishersQuery = "select publisher from boardgame_publisher where boardgame_id = " + str(boardgame_id) + ";"
-            #designersQuery = "select designer from boardgame_designer where boardgame_id = " + str(boardgame_id) + ";"
+            if boardgame_id in categoriesDict:
+                categories = categoriesDict[boardgame_id]
 
-            categories = getMultipleAttributeValues(cur, categoriesQuery)
-            mechanics = getMultipleAttributeValues(cur, mechanicsQuery)
-            #publishers = getMultipleAttributeValues(cur, publishersQuery)
-            #designers = getMultipleAttributeValues(cur, designersQuery)
+            if boardgame_id in mechanicsDict:
+                mechanics = mechanicsDict[boardgame_id]
 
             game = Game(boardgame_id, name, min_players, max_players, min_age, categories, \
                         mechanics, description, playing_time, False, "test", [], \
                         [], rating)
 
             games.append(game)
-    except:
-        print "Error: unable to fetch data"
+    except Exception as e:
+        print "Error: unable to fetch data" + str(e)
 
     db.close()
     return games
+
+def getMultipleAttributeValues(cur, query):
+    cur.execute(query)
+    attrValues = cur.fetchall()
+
+    valueList = {}
+
+    for value in attrValues:
+        vals = []
+        if value[0] not in valueList:
+            vals.append(value[1])
+            valueList[value[0]] = vals
+        else:
+            valueList[value[0]].append(value[1])
+
+    return valueList
 
 #WHILE NEW-SOLUTION specify(candidate-classes -> attribute)
 #       AND SIZE candidate-classes > 1 DO
@@ -159,17 +179,6 @@ def matchFeatureSet(gameProfile, game):
             matchList(game.mechanics, gameProfile.mechanics))
 
 
-def getMultipleAttributeValues(cur, query):
-    cur.execute(query)
-    attrValues = cur.fetchall()
-
-    valueList = []
-
-    for value in attrValues:
-        valueList.append(value[0])
-
-    return valueList
-
 def recommend(profparams):
     #print profparams['categories'].split(",")
     gp = GameProfile(int(profparams['min_players']), int(profparams['max_players']), int(profparams['player_age']), profparams['categories'].split(","), \
@@ -181,14 +190,9 @@ def recommend(profparams):
 
     recommendations = obtainRecommendations(gp, games)
 
-    #sortedRecommendations = sorted(recommendations, key=lambda k: k['rating']) 
-
-    #sort_on = "rating"
-    #decorated = [(dict_[sort_on], dict_) for dict_ in recommendations]
-    #decorated.sort()
-    #result = [dict_ for (key, dict_) in decorated]
+    recommendations.sort(key=lambda x: x.rating, reverse=True)
 
     return recommendations[:10]
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
