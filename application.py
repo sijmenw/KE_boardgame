@@ -1,4 +1,3 @@
-# all the imports
 import json
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash
@@ -9,38 +8,39 @@ import MySQLdb
 import credentials
 from operator import itemgetter
 
-# create our little application :)
+##################################################################################
+#                                                                                #
+#                           WEB APPLICATION CODE                                 #
+#                                                                                #
+##################################################################################
+
+# Create the web application
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-
+# Get the .html file to display the form
 @app.route('/')
 def home():
     return app.send_static_file('client.html')
 
-
+# Send form data to the recommender application and obtain the result
 @app.route('/query_games/', methods=['POST'])
 def query_games():
     # get data
     dict_input = request.get_json(force=True)
 
-    print dict_input
-
-    recommendations = recommend(dict_input)
-
+    recommendations = rankedRecommendation(dict_input)
     resultData = []
     
     for r in recommendations:
         resultData.append(r.__dict__)
 
-
     result = {'success': 'true', 'message': 'Heuy fissa', 'data': resultData}
     return json.dumps(result)
 
-
+# Helper function: get all possible values from categories and mechanics from the databse
 @app.route('/get_form_options/', methods=['POST'])
 def get_form_options():
-
     categoriesQuery = "select distinct category from boardgame_category;"
     mechanicsQuery = "select distinct mechanics from boardgame_mechanics;"
 
@@ -52,6 +52,7 @@ def get_form_options():
     result = {'success': 'true', 'message': 'Here are the dropdowns', 'data': checkboxes}
     return json.dumps(result)
 
+# Helper function: query the database, get resultset and return it as a list
 def getDistinctOptions(query):
     result_list = []
 
@@ -71,12 +72,43 @@ def getDistinctOptions(query):
     db.close()
     return result_list
 
+##################################################################################
+#                                                                                #
+#                         BOARD GAME RECOMMENDER CODE                            #
+#                                                                                #
+##################################################################################
+
+#TASK createGameProfile:
+# ROLES:
+#   INPUT: user form input;
+#   OUTPUT: GameProfile object;
+#END TASK createGameProfile;
+
+#WHILE NEW-PROFILE create(candidate-classes -> attribute)
+#     obtain(attribute -> new-feature);
+#     current-feature-set := new-feature ADD current-feature-set;
+def createGameProfile(formParams):
+    return GameProfile(int(formParams['min_players']), int(formParams['max_players']), int(formParams['player_age']), formParams['categories'].split(","), \
+                    formParams['mechanics'].split(","), int(formParams['min_playing_time']), int(formParams['max_playing_time']))
+
+#TASK obtainRecommendations;
+# ROLES:
+#   INPUT: object: "Game profile";
+#   OUTPUT: candidate-classes: "Set of games matching input";
+#END TASK obtainRecommendations;
+
+def obtainRecommendations(gameProfile):
+    games = generateCandidateGames()
+
+    recommendations = match(gameProfile, games)
+
+    return recommendations
+
 #WHILE NEW-SOLUTION generate(object -> class) DO
 # candidate-classes := class ADD candidate-classes;
 #END WHILE
 
 def generateCandidateGames():
-
     db = credentials.connect()
     cur = db.cursor()
 
@@ -92,38 +124,20 @@ def generateCandidateGames():
         cur.execute(canditatesQuery)
         gameResults = cur.fetchall()
 
-        description = ""
         games = []
-        categories = []
-        mechanics = []
 
-        for game in gameResults:
-            boardgame_id = game[0]
-            name = game[1]
-            expansion = game[2]
-            min_players = game[3]
-            max_players = game[4]
-            min_age = game[5]
-            playing_time = game[6]
-            rating = game[7]
-
-            if boardgame_id in categoriesDict:
-                categories = categoriesDict[boardgame_id]
-
-            if boardgame_id in mechanicsDict:
-                mechanics = mechanicsDict[boardgame_id]
-
-            game = Game(boardgame_id, name, min_players, max_players, min_age, categories, \
-                        mechanics, description, playing_time, False, "test", [], \
-                        [], rating)
-
+        for gameRes in gameResults:
+            game = specifyAndObtainAttributes(gameRes, categoriesDict, mechanicsDict)
             games.append(game)
+
     except Exception as e:
         print "Error: unable to fetch data" + str(e)
 
     db.close()
     return games
 
+# Helper function for generateCandidateGames
+# Get list of attribute values for attributes that allow multiple values
 def getMultipleAttributeValues(cur, query):
     cur.execute(query)
     attrValues = cur.fetchall()
@@ -144,6 +158,33 @@ def getMultipleAttributeValues(cur, query):
 #       AND SIZE candidate-classes > 1 DO
 #     obtain(attribute -> new-feature);
 #     current-feature-set := new-feature ADD current-feature-set;
+
+def specifyAndObtainAttributes(game, categoriesDict, mechanicsDict):
+    description = ""
+    categories = []
+    mechanics = []
+
+    boardgame_id = game[0]
+    name = game[1]
+    expansion = game[2]
+    min_players = game[3]
+    max_players = game[4]
+    min_age = game[5]
+    playing_time = game[6]
+    rating = game[7]
+
+    if boardgame_id in categoriesDict:
+        categories = categoriesDict[boardgame_id]
+
+    if boardgame_id in mechanicsDict:
+        mechanics = mechanicsDict[boardgame_id]
+
+    game = Game(boardgame_id, name, min_players, max_players, min_age, categories, \
+                        mechanics, description, playing_time, False, "test", [], \
+                        [], rating)
+
+    return game
+
 #     FOR-EACH class IN candidate-classes DO
 #       match(class + current-feature-set -> truth-value);
 #     IF truth-value == false
@@ -151,23 +192,17 @@ def getMultipleAttributeValues(cur, query):
 #       candidate-classes := candidate-classes SUBTRACT class;
 #     END IF
 #   END FOR-EACH
-
-def obtainRecommendations(gameProfile, games):
+def match(gameProfile, games):
     recommendations = []
 
     for game in games:
         if matchFeatureSet(gameProfile, game):
             recommendations.append(game)
-    
+
     return recommendations
 
-#check if there is an overlap between features that allow multiple values
-def matchList(gameProfileFeatures, gameFeatures):
-    return len(list(set(gameProfileFeatures) & set(gameFeatures))) > 0
-
-
-#Knowledge base specified by rule types
-#Match inference step
+# Knowledge base specified by rule types
+# Match inference step
 def matchFeatureSet(gameProfile, game):
 
     return (game.min_players >= gameProfile.min_players and 
@@ -178,18 +213,19 @@ def matchFeatureSet(gameProfile, game):
             matchList(game.categories, gameProfile.categories) and 
             matchList(game.mechanics, gameProfile.mechanics))
 
+# Helper function for matchFeature set
+# Use this to match attributes with multiple values (categories and mechanics)
+# The function checks if there is an overlap between features that allow multiple values (set intersection)
+def matchList(gameProfileFeatures, gameFeatures):
+    return len(list(set(gameProfileFeatures) & set(gameFeatures))) > 0
 
-def recommend(profparams):
-    #print profparams['categories'].split(",")
-    gp = GameProfile(int(profparams['min_players']), int(profparams['max_players']), int(profparams['player_age']), profparams['categories'].split(","), \
-                    profparams['mechanics'].split(","), int(profparams['min_playing_time']), int(profparams['max_playing_time']))
-    
-    gp.displayGameProfile()
+# Get the top 10 recommendations based on user rating
+def rankedRecommendation(formParams):
+    gp = createGameProfile(formParams)
 
-    games = generateCandidateGames()
+    recommendations = obtainRecommendations(gp)
 
-    recommendations = obtainRecommendations(gp, games)
-
+    # rank(candidate-classes)
     recommendations.sort(key=lambda x: x.rating, reverse=True)
 
     return recommendations[:10]

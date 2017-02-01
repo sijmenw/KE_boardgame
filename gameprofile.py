@@ -9,14 +9,12 @@
 # max playing time
 # expansion
 # expands
-# publisher
-# designer
 
 class GameProfile:
 
 	def __init__(self, min_players, max_players, player_age, categories, \
 				mechanics, min_playing_time, max_playing_time, expansion=False, \
-				expands="", publishers="", designers=""):
+				expands=""):
 		self.min_players = min_players
 		self.max_players = max_players
 		self.player_age = player_age
@@ -26,8 +24,6 @@ class GameProfile:
 		self.max_playing_time = max_playing_time
 		self.expansion = expansion
 		self.expands = expands
-		self.publishers = publishers
-		self.designers = designers
 
 	def printList(self, listOfItems):
 		items = ""
@@ -48,6 +44,4 @@ class GameProfile:
 		print "Maximum playing time: " + str(self.max_playing_time)
 		print "Expansion: " + str(self.expansion)
 		print "Expands: " + self.expands
-		print "Publishers: " + self.printList(self.publishers)
-		print "Designers: " + self.printList(self.designers)
 
