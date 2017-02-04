@@ -180,7 +180,7 @@ def specifyAndObtainAttributes(game, categoriesDict, mechanicsDict):
         mechanics = mechanicsDict[boardgame_id]
 
     game = Game(boardgame_id, name, min_players, max_players, min_age, categories, \
-                        mechanics, description, playing_time, False, "test", [], \
+                        mechanics, description, playing_time, expansion, "test", [], \
                         [], rating)
 
     return game

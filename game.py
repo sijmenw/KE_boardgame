@@ -1,5 +1,7 @@
 # create game class
 # game profile:
+# boardgame_id
+# name
 # min_players
 # max_players
 # player_age
